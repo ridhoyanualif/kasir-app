@@ -405,16 +405,16 @@
         <h2 class="text-lg font-semibold mb-2 text-center">Transaction Receipt</h2>
         <hr class="mb-2">
         <p class="block text-sm font-medium"><strong>Cashier ID:</strong> ${transaction.cashier_id} - ${transaction.cashier_name}</p>
-        <p class="block text-sm font-medium"><strong>Transaction ID:</strong> ${transaction.id}</p>
+        <p class="block text-sm font-medium"><strong>Invoice:</strong> ${transaction.invoice}</p>
         <p class="block text-sm font-medium"><strong>Date:</strong> ${transaction.transaction_date}</p>
 
         ${transaction.member_id ? `
-                <hr class="my-2">
-                <p class="block text-sm font-medium"><strong>Member ID:</strong> ${transaction.member_id}</p>
-                <p class="block text-sm font-medium"><strong>Member Name:</strong> ${transaction.member_name}</p>
-                <p class="block text-sm font-medium"><strong>Point Before:</strong> ${transaction.point}</p>
-                <p class="block text-sm font-medium"><strong>Point After:</strong> ${transaction.point_after}</p>
-            ` : ''}
+                    <hr class="my-2">
+                    <p class="block text-sm font-medium"><strong>Member ID:</strong> ${transaction.member_id}</p>
+                    <p class="block text-sm font-medium"><strong>Member Name:</strong> ${transaction.member_name}</p>
+                    <p class="block text-sm font-medium"><strong>Point Before:</strong> ${transaction.point}</p>
+                    <p class="block text-sm font-medium"><strong>Point After:</strong> ${transaction.point_after}</p>
+                ` : ''}
 
         <hr class="my-2">
         <h3 class="text-lg font-semibold">Items:</h3>
@@ -428,12 +428,12 @@
             </thead>
             <tbody>
                 ${transaction.items.map(item => `
-                        <tr>
-                            <td class="border border-gray-300 px-2 py-1">${item.name}</td>
-                            <td class="border border-gray-300 px-2 py-1 text-center">${item.quantity}</td>
-                            <td class="border border-gray-300 px-2 py-1 text-right">${formatRupiah(item.price)}</td>
-                        </tr>
-                    `).join('')}
+                            <tr>
+                                <td class="border border-gray-300 px-2 py-1">${item.name}</td>
+                                <td class="border border-gray-300 px-2 py-1 text-center">${item.quantity}</td>
+                                <td class="border border-gray-300 px-2 py-1 text-right">${formatRupiah(item.price)}</td>
+                            </tr>
+                        `).join('')}
             </tbody>
         </table>
 
@@ -446,7 +446,7 @@
     </div>
 
     <button id="exclude-pdf-close" onclick="closeReceipt()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded w-full">Close</button>
-    <button id="exclude-pdf-button" onclick="saveAsPdf(${transaction.id})" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded w-full">PDF Receipt</button>
+    <button id="exclude-pdf-button" onclick="saveAsPdf(${transaction.id}, '${transaction.invoice}')" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded w-full">PDF Receipt</button>
 `;
 
 
@@ -461,45 +461,45 @@
         }
 
 
-        function saveAsPdf(transactionId) {
-            let receiptDiv = document.getElementById("receipt-popup");
+        function saveAsPdf(transactionId, invoice) {
+    let receiptDiv = document.getElementById("receipt-popup");
 
-            if (!receiptDiv) {
-                alert("Receipt not found!");
-                return;
-            }
+    if (!receiptDiv) {
+        alert("Receipt not found!");
+        return;
+    }
 
-            // Duplikat receiptDiv agar tidak mengubah tampilan modal
-            let clonedReceipt = receiptDiv.cloneNode(true);
+    let clonedReceipt = receiptDiv.cloneNode(true);
 
-            // Hapus elemen tombol sebelum mengirim ke server
-            clonedReceipt.querySelectorAll("#exclude-pdf-close, #exclude-pdf-button").forEach(btn => btn.remove());
+    clonedReceipt.querySelectorAll("#exclude-pdf-close, #exclude-pdf-button").forEach(btn => btn.remove());
 
-            let htmlContent = clonedReceipt.innerHTML;
+    let htmlContent = clonedReceipt.innerHTML;
 
-            fetch('/generate-pdf', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        html: htmlContent,
-                        transaction_id: transactionId
-                    })
-                })
-                .then(response => response.blob())
-                .then(blob => {
-                    let url = window.URL.createObjectURL(blob);
-                    let a = document.createElement("a");
-                    a.href = url;
-                    a.download = `${transactionId} Receipt.pdf`; // Nama file sesuai Transaction ID
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                })
-                .catch(error => console.error("Error generating PDF:", error));
-        }
+    fetch('/generate-pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                html: htmlContent,
+                transaction_id: transactionId,
+                invoice: invoice
+            })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = `${invoice} Receipt.pdf`; // ✅ nama file sesuai invoice
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => console.error("Error generating PDF:", error));
+}
+
 
 
 

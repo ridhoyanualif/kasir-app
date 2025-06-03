@@ -50,22 +50,25 @@ class POSController extends Controller
     {
 
         $minCash = ($request->total_price_after > 0)
-    ? $request->total_price_after
-    : $request->total_price;
+            ? $request->total_price_after
+            : $request->total_price;
 
-$validator = Validator::make($request->all(), [
-    'products' => 'required|array',
-    'total_price' => 'required|numeric',
-    'cash' => 'required|numeric|min:' . $minCash,
-], [
-    'cash.min' => 'Cash must be at least Rp ' . number_format($minCash, 0, ',', '.'),
-]);
+        $validator = Validator::make($request->all(), [
+            'products' => 'required|array',
+            'total_price' => 'required|numeric',
+            'cash' => 'required|numeric|min:' . $minCash,
+        ], [
+            'cash.min' => 'Cash must be at least Rp ' . number_format($minCash, 0, ',', '.'),
+        ]);
 
 
-if ($validator->fails()) {
-    return response()->json(['error' => $validator->errors()->first()], 422);
-}
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
 
+        do {
+            $invoice = 'INV-' . now()->format('Ymd') . '-' . mt_rand(1000, 9999);
+        } while (Transaction::where('invoice', $invoice)->exists());
 
 
         DB::beginTransaction();
@@ -73,6 +76,7 @@ if ($validator->fails()) {
         try {
             $transaction = Transaction::create([
                 'user_id' => Auth::id(),
+                'invoice' => $invoice,
                 'fid_member' => $request->member_id ?? null,
                 'total_price' => $request->total_price,
                 'cash' => $request->cash,
@@ -126,7 +130,7 @@ if ($validator->fails()) {
             return response()->json([
                 'message' => 'Transaction successful',
                 'transaction' => [
-                    'id' => $transaction->id,
+                    'invoice' => $transaction->invoice,
                     'cashier_id' => $transaction->user_id,
                     'cashier_name' => Auth::user()->name,
                     'transaction_date' => $transaction->transaction_date->format('Y-m-d H:i:s'),

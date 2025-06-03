@@ -10,12 +10,12 @@ class ReceiptController extends Controller
     public function generatePdf(Request $request)
     {
         $htmlContent = $request->input('html');
-        $transactionId = $request->input('transaction_id'); // Ambil transaction_id
+        $invoice = $request->input('invoice');
         $receiptFolder = storage_path("app/public/receipt");
         if (!file_exists($receiptFolder)) {
             mkdir($receiptFolder, 0755, true);
         }
-        $pdfPath = "{$receiptFolder}/{$transactionId} Receipt.pdf";
+        $pdfPath = "{$receiptFolder}/{$invoice} Receipt.pdf";
 
         Browsershot::html($htmlContent)
             ->format('A4')

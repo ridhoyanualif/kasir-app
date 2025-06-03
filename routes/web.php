@@ -8,6 +8,7 @@ use App\Http\Controllers\POSController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\Cashier\CashierController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\HistoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 
@@ -90,7 +91,7 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
 
     Route::get('/check-barcode', [ProductController::class, 'checkBarcode'])->name('barcode.check');
 
-
+    Route::get('/admin/history', [HistoryController::class, 'index'])->name('history.index');
 
 
     Route::get('/members/{id}/edit', [MemberController::class, 'edit'])->name('members.edit');
