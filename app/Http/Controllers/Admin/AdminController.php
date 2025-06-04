@@ -58,6 +58,9 @@ class AdminController extends Controller
     $transactionIds = Transaction::whereBetween('created_at', [$startDate, $endDate])
         ->pluck('id');
 
+    $countTransaction = Transaction::whereBetween('created_at', [$startDate, $endDate])
+        ->count('id');
+
     // Total Modal dari transaksi detail
     $totalCost = TransactionDetail::whereIn('transaction_id', $transactionIds)
         ->join('products', 'transaction_details.product_id', '=', 'products.id_product')
@@ -90,6 +93,7 @@ class AdminController extends Controller
         'totalMembers' => Member::count(),
         'totalCategories' => Category::count(),
         'totalCashiers' => User::where('role', 'cashier')->count(),
+        'countTransaction' => $countTransaction,
         'startDate' => $startDate,
         'endDate' => $endDate,
         'grossProfit' => $grossProfit,

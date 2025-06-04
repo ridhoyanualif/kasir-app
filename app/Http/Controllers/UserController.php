@@ -24,7 +24,7 @@ class UserController extends Controller
     $htmlContent = $request->input('html');
     $transactionId = $request->input('transaction_id');
 
-    $receiptFolder = storage_path("app/public/receipt");
+    $receiptFolder = storage_path("app/public/selling-report");
     if (!file_exists($receiptFolder)) {
         mkdir($receiptFolder, 0755, true);
     }

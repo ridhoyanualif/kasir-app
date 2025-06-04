@@ -55,7 +55,7 @@
 
 
             <div class="bg-white dark:bg-gray-800 rounded-b-lg rounded-tl-lg shadow p-6" id="selling-report">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Selling Chart</h3>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Laporan Penjualan</h3>
 
                 <form method="GET" class="mb-6 flex flex-col md:flex-row gap-6 items-start md:items-center">
                     <!-- Input Bulan -->
@@ -95,6 +95,14 @@
 
                 <!-- Profit Summary Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-gray-800 rounded-b-lg shadow p-6">
+
+                    <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-5">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Jumlah Transaksi</h3>
+                        <p class="text-3xl font-bold mt-2 text-gray-500">
+                            {{ $countTransaction }}
+                        </p>
+                    </div>
+
                     <!-- Laba Kotor -->
                     <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-5">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Laba Kotor</h3>
@@ -206,7 +214,7 @@
                 chartCanvas.parentNode.replaceChild(chartImg, chartCanvas); // Ganti canvas dengan img
 
                 const htmlContent = reportElement.outerHTML;
-                const transactionId = new Date().getTime();
+                const transactionId = "{{ isset($startDate) && isset($endDate) ? $startDate->format('d-M-Y') . '-' . $endDate->format('d-M-Y') : 'report' }}";
 
                 fetch("{{ route('admin.generate-pdf') }}", {
                         method: "POST",

@@ -342,7 +342,9 @@
 
 
             let point_after;
-            if (inputPoint > 0) {
+            if (!memberId) {
+                point_after = 0;
+            } else if (inputPoint > 0) {
                 point_after = point - inputPoint;
             } else {
                 if (totalPrice >= 1 && totalPrice <= 499999) {
@@ -401,52 +403,61 @@
             }
 
             let receiptContent = `
-    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow text-gray-900 dark:text-gray-100">
-        <h2 class="text-lg font-semibold mb-2 text-center">Transaction Receipt</h2>
-        <hr class="mb-2">
-        <p class="block text-sm font-medium"><strong>Cashier ID:</strong> ${transaction.cashier_id} - ${transaction.cashier_name}</p>
-        <p class="block text-sm font-medium"><strong>Invoice:</strong> ${transaction.invoice}</p>
-        <p class="block text-sm font-medium"><strong>Date:</strong> ${transaction.transaction_date}</p>
+    <div class="bg-white p-4 rounded-lg shadow text-gray-900" id="receipt-content">
+        <div class="mx-auto h-20 w-20 relative" id="logo-container">
+                            <span class="absolute inset-0 rounded-full border-2 border-gray-800"></span>
+                            <span class="absolute inset-2 rounded-full border-2 border-gray-400"></span>
+                            <img src="{{ asset('images/Kasir.png') }}" alt="logo"
+                                class="relative h-full w-full rounded-full object-cover p-2">
+                        </div>
+    <h2 class="text-lg font-semibold my-2 text-center">Transaction Receipt</h2>
+    <hr class="mb-2 border-gray-900">
+    <p class="block text-sm font-medium"><strong>Cashier ID:</strong> ${transaction.cashier_id} - ${transaction.cashier_name}</p>
+    <p class="block text-sm font-medium"><strong>Invoice:</strong> ${transaction.invoice}</p>
+    <p class="block text-sm font-medium"><strong>Date:</strong> ${transaction.transaction_date}</p>
 
-        ${transaction.member_id ? `
-                    <hr class="my-2">
-                    <p class="block text-sm font-medium"><strong>Member ID:</strong> ${transaction.member_id}</p>
-                    <p class="block text-sm font-medium"><strong>Member Name:</strong> ${transaction.member_name}</p>
-                    <p class="block text-sm font-medium"><strong>Point Before:</strong> ${transaction.point}</p>
-                    <p class="block text-sm font-medium"><strong>Point After:</strong> ${transaction.point_after}</p>
-                ` : ''}
+    ${transaction.member_id ? `
+                            <hr class="my-2 border-gray-900">
+                            <p class="block text-sm font-medium"><strong>Member ID:</strong> ${transaction.member_id}</p>
+                            <p class="block text-sm font-medium"><strong>Member Name:</strong> ${transaction.member_name}</p>
+                            <p class="block text-sm font-medium"><strong>Point Before:</strong> ${transaction.point}</p>
+                            <p class="block text-sm font-medium"><strong>Point After:</strong> ${transaction.point_after}</p>
+                        ` : ''}
 
-        <hr class="my-2">
-        <h3 class="text-lg font-semibold">Items:</h3>
-        <table class="w-full border-collapse border border-gray-300 mt-2">
-            <thead>
-                <tr class="bg-gray-800">
-                    <th class="border border-gray-300 px-2 py-1">Product</th>
-                    <th class="border border-gray-300 px-2 py-1">Qty</th>
-                    <th class="border border-gray-300 px-2 py-1">Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${transaction.items.map(item => `
-                            <tr>
-                                <td class="border border-gray-300 px-2 py-1">${item.name}</td>
-                                <td class="border border-gray-300 px-2 py-1 text-center">${item.quantity}</td>
-                                <td class="border border-gray-300 px-2 py-1 text-right">${formatRupiah(item.price)}</td>
-                            </tr>
-                        `).join('')}
-            </tbody>
-        </table>
+    <hr class="my-2 border-gray-900">
+    <h3 class="text-lg font-semibold">Items:</h3>
+    <table class="w-full border-collapse border border-gray-900 mt-2">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border border-gray-900 px-2 py-1 text-left">Product</th>
+                <th class="border border-gray-900 px-2 py-1 text-center">Qty</th>
+                <th class="border border-gray-900 px-2 py-1 text-right">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${transaction.items.map(item => `
+                                    <tr>
+                                        <td class="border border-gray-900 px-2 py-1">${item.name}</td>
+                                        <td class="border border-gray-900 px-2 py-1 text-center">${item.quantity}</td>
+                                        <td class="border border-gray-900 px-2 py-1 text-right">${formatRupiah(item.price)}</td>
+                                    </tr>
+                                `).join('')}
+        </tbody>
+    </table>
 
-        <hr class="my-2">
-        <p><strong>Total Price:</strong> <span class="text-blue-400">${formatRupiah(transaction.total_price)}</span></p>
-        ${transaction.cut >= 0 ? `<p><strong>Cut (Point):</strong> <span class="text-red-400">-${formatRupiah(transaction.cut)}</span></p>` : ''}
-        ${transaction.total_price_after > 0 ? `<p><strong>Total After Cut:</strong> <span class="text-blue-450">${formatRupiah(transaction.total_price_after)}</span></p>` : ''}
-        <p><strong>Cash:</strong> <span class="text-green-400">${formatRupiah(transaction.cash)}</span></p>
-        <p><strong>Change:</strong> <span class="text-yellow-400">${formatRupiah(transaction.change)}</span></p>
-    </div>
+    <hr class="my-2 border-gray-900">
+    <p><strong>Total Price:</strong> <span class="text-blue-800">${formatRupiah(transaction.total_price)}</span></p>
+    ${transaction.cut >= 0 ? `<p><strong>Cut (Point):</strong> <span class="text-red-600">- ${formatRupiah(transaction.cut)}</span></p>` : ''}
+    ${transaction.total_price_after > 0 ? `<p><strong>Total After Cut:</strong> <span class="text-blue-850">${formatRupiah(transaction.total_price_after)}</span></p>` : ''}
+    <p><strong>Cash:</strong> <span class="text-green-800">${formatRupiah(transaction.cash)}</span></p>
+    <p><strong>Change:</strong> <span class="text-yellow-600">${formatRupiah(transaction.change)}</span></p>
+</div>
+
 
     <button id="exclude-pdf-close" onclick="closeReceipt()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded w-full">Close</button>
-    <button id="exclude-pdf-button" onclick="saveAsPdf(${transaction.id}, '${transaction.invoice}')" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded w-full">PDF Receipt</button>
+    <button id="exclude-pdf-button" onclick="downloadReceiptPDF('${transaction.invoice}')" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded w-full">
+    PDF Receipt
+</button>
 `;
 
 
@@ -459,46 +470,6 @@
 
             document.body.appendChild(receiptDiv);
         }
-
-
-        function saveAsPdf(transactionId, invoice) {
-    let receiptDiv = document.getElementById("receipt-popup");
-
-    if (!receiptDiv) {
-        alert("Receipt not found!");
-        return;
-    }
-
-    let clonedReceipt = receiptDiv.cloneNode(true);
-
-    clonedReceipt.querySelectorAll("#exclude-pdf-close, #exclude-pdf-button").forEach(btn => btn.remove());
-
-    let htmlContent = clonedReceipt.innerHTML;
-
-    fetch('/generate-pdf', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                html: htmlContent,
-                transaction_id: transactionId,
-                invoice: invoice
-            })
-        })
-        .then(response => response.blob())
-        .then(blob => {
-            let url = window.URL.createObjectURL(blob);
-            let a = document.createElement("a");
-            a.href = url;
-            a.download = `${invoice} Receipt.pdf`; // ✅ nama file sesuai invoice
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        })
-        .catch(error => console.error("Error generating PDF:", error));
-}
 
 
 
@@ -554,6 +525,57 @@
             qrbox: 250
         }).render(onScanSuccess);
     </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadReceiptPDF(invoice) {
+            const content = document.getElementById("receipt-content");
+
+            // Default nama file kalau invoice kosong
+            const filename = (invoice ? invoice : "Receipt") + "_Receipt.pdf";
+
+            const closeBtn = document.getElementById("exclude-pdf-close");
+            const pdfBtn = document.getElementById("exclude-pdf-button");
+
+            if (closeBtn) closeBtn.style.display = "none";
+            if (pdfBtn) pdfBtn.style.display = "none";
+
+            const clone = content.cloneNode(true);
+            const tempContainer = document.createElement("div");
+            tempContainer.style.position = "fixed";
+            tempContainer.style.left = "-9999px";
+            tempContainer.appendChild(clone);
+            document.body.appendChild(tempContainer);
+
+            html2pdf().set({
+                    margin: 0.5,
+                    filename: filename,
+                    image: {
+                        type: 'jpeg',
+                        quality: 0.98
+                    },
+                    html2canvas: {
+                        scale: 2
+                    },
+                    jsPDF: {
+                        unit: 'in',
+                        format: 'a4',
+                        orientation: 'portrait'
+                    }
+                })
+                .from(clone)
+                .save()
+                .then(() => {
+                    document.body.removeChild(tempContainer);
+                    if (closeBtn) closeBtn.style.display = "block";
+                    if (pdfBtn) pdfBtn.style.display = "block";
+                });
+        }
+    </script>
+
+
+
 
 
 

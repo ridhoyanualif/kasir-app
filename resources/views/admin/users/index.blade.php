@@ -6,7 +6,7 @@
     </x-slot>
 
 
-<div class="py-5">
+    <div class="py-5">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -69,7 +69,7 @@
                                                 @method('DELETE')
                                                 <button type="submit"
                                                     class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                                                    onclick="return confirm('Are you sure you want to delete this cashier?');">
+                                                    onclick="return confirm('Are you sure you want to delete this user?');">
                                                     Delete
                                                 </button>
                                             </form>
@@ -89,8 +89,7 @@
 
                             <div class="mb-4">
                                 <label for="name" class="block text-sm font-medium text-white">Name</label>
-                                <input type="text" name="name" id="name" required
-                                    value="{{ old('name') }}"
+                                <input type="text" name="name" id="name" required value="{{ old('name') }}"
                                     class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white bg-gray-700">
                                 @error('name')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

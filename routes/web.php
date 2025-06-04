@@ -9,6 +9,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\Cashier\CashierController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\HistoryController;
+use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 
@@ -92,7 +93,10 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     Route::get('/check-barcode', [ProductController::class, 'checkBarcode'])->name('barcode.check');
 
     Route::get('/admin/history', [HistoryController::class, 'index'])->name('history.index');
+    Route::get('/admin/history/{id}/show', [HistoryController::class, 'show'])->name('history.show');
+    Route::post('/generate-pdf', [HistoryController::class, 'generatePdf'])->name('history.generate-pdf');
 
+    Route::get('/admin/discounts', [DiscountController::class, 'index'])->name('discounts.index');
 
     Route::get('/members/{id}/edit', [MemberController::class, 'edit'])->name('members.edit');
     Route::put('/members/{id}', [MemberController::class, 'update'])->name('members.update');
