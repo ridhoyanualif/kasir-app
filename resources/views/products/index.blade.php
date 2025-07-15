@@ -24,6 +24,8 @@
                                     <th class="border border-gray-300 px-4 py-2">Stock</th>
                                     <th class="border border-gray-300 px-4 py-2">Modal</th>
                                     <th class="border border-gray-300 px-4 py-2">Selling Price</th>
+                                    <th class="border border-gray-300 px-4 py-2">Selling Price Before</th>
+                                    <th class="border border-gray-300 px-4 py-2">Discount ID</th>
                                     <th class="border border-gray-300 px-4 py-2">Profit</th>
                                     <th class="border border-gray-300 px-4 py-2">Category ID</th>
                                     <th class="border border-gray-300 px-4 py-2">Description</th>
@@ -54,6 +56,10 @@
                                         <td class="border border-gray-300 px-4 py-2">
                                             {{ 'Rp. ' . number_format($product->selling_price, 2, ',', '.') }}
                                         </td>
+                                        <td class="border border-gray-300 px-4 py-2">
+                                            {{ $product->selling_price_before === null ? '-' : 'Rp. ' . number_format($product->selling_price_before, 2, ',', '.') }}
+                                        </td>
+                                        <td class="border border-gray-300 px-4 py-2">{{ $product->fid_discount === null ? '-' : $product->fid_discount . '-' . $product->discount->name }}</td>
                                         <td class="border border-gray-300 px-4 py-2">
                                             {{ 'Rp. ' . number_format($product->profit, 2, ',', '.') }}
                                         </td>

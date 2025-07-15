@@ -22,8 +22,10 @@ class Product extends Model
         'stock',
         'modal',
         'selling_price',
+        'selling_price_before',
         'profit',
         'fid_category',
+        'fid_discount',
         'description',
     ];
 
@@ -37,6 +39,9 @@ class Product extends Model
     {
         return $this->hasMany(TransactionDetail::class, 'product_id', 'id_product');
     }
-    
 
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class, 'fid_discount', 'id');
+    }
 }
