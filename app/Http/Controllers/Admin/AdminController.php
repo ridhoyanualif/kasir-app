@@ -69,24 +69,30 @@ class AdminController extends Controller
 
     // Keuntungan = total - total modal
     $netProfit = $grossProfit - $totalCost;
-    $profitLevel = ($netProfit / $totalCost) * 100;
+    if ($totalCost != null) {
+        $profitLevel = ($netProfit / $totalCost) * 100;
 
-    if ($profitLevel < 10) {
-    $profitLabel = '= Sangat Rendah';
-    $profitColor = 'text-red-600 dark:text-red-400';
-} elseif ($profitLevel <= 30) {
-    $profitLabel = '= Rendah';
-    $profitColor = 'text-yellow-600 dark:text-yellow-400';
-} elseif ($profitLevel <= 60) {
-    $profitLabel = '= Menengah';
-    $profitColor = 'text-blue-600 dark:text-blue-400';
-} elseif ($profitLevel <= 100) {
-    $profitLabel = '= Tinggi';
-    $profitColor = 'text-green-600 dark:text-green-400';
-} else {
-    $profitLabel = '= Sangat Tinggi';
-    $profitColor = 'text-green-600 dark:text-green-400';
-}
+        if ($profitLevel < 10) {
+        $profitLabel = '= Sangat Rendah';
+        $profitColor = 'text-red-600 dark:text-red-400';
+    } elseif ($profitLevel <= 30) {
+        $profitLabel = '= Rendah';
+        $profitColor = 'text-yellow-600 dark:text-yellow-400';
+    } elseif ($profitLevel <= 60) {
+        $profitLabel = '= Menengah';
+        $profitColor = 'text-blue-600 dark:text-blue-400';
+    } elseif ($profitLevel <= 100) {
+        $profitLabel = '= Tinggi';
+        $profitColor = 'text-green-600 dark:text-green-400';
+    } else {
+        $profitLabel = '= Sangat Tinggi';
+        $profitColor = 'text-green-600 dark:text-green-400';
+    }
+    } else {
+        $profitLevel = 0;
+        $profitLabel = '= Belum Ada Data';
+        $profitColor = 'text-gray-400 dark:text-gray-400';
+    }
 
     return view('admin.dashboard', [
         'totalProducts' => Product::count(),

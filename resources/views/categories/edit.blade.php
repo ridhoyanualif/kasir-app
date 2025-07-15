@@ -1,4 +1,4 @@
-<x-layout>
+<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Edit Category') }}
@@ -10,12 +10,12 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-semibold">Edit Category</h3>
-                    
+
                     <!-- Form Edit Kategori -->
                     <form action="{{ route('categories.update', $category->id_category) }}" method="POST" class="mt-4">
                         @csrf
                         @method('PUT') <!-- Menyatakan bahwa ini adalah permintaan PUT -->
-                        
+
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-white">Category Name</label>
                             <input type="text" name="name" id="name" value="{{ $category->name }}" required
@@ -25,7 +25,7 @@
 @endif
 
                         </div>
-                        
+
                         <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Update</button>
                     </form>
                     <!-- Akhir Form Edit Kategori -->
@@ -34,4 +34,4 @@
             </div>
         </div>
     </div>
-</x-layout>
+</x-app-layout>
