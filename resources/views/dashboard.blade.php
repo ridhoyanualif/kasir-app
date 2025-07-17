@@ -32,6 +32,10 @@
 
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $product->name }}</h3>
 
+                @if($product->selling_price_before !== null)
+                    <p class="text-orange-500 font-bold text-xs line-through">Rp. {{ number_format($product->selling_price_before, 2, ',', '.') }}</p>
+                @endif
+
                 <p class="text-green-500 font-bold">Rp. {{ number_format($product->selling_price, 2, ',', '.') }}</p>
 
                 <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">

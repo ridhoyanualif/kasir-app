@@ -56,10 +56,22 @@
                                         <td class="border border-gray-300 px-4 py-2">
                                             {{ 'Rp. ' . number_format($product->selling_price, 2, ',', '.') }}
                                         </td>
-                                        <td class="border border-gray-300 px-4 py-2">
+                                        <td class="border border-gray-300 px-4 py-2 text-center align-middle">
                                             {{ $product->selling_price_before === null ? '-' : 'Rp. ' . number_format($product->selling_price_before, 2, ',', '.') }}
                                         </td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $product->fid_discount === null ? '-' : $product->fid_discount . '-' . $product->discount->name }}</td>
+                                        <td class="border border-gray-300 px-4 py-2 text-center align-middle">
+                                            @if ($product->discount)
+                                                <span
+                                                    class="bg-green-600 text-gray-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                                    {{ $product->fid_discount }} - {{ $product->discount->name }}
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                                    -
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td class="border border-gray-300 px-4 py-2">
                                             {{ 'Rp. ' . number_format($product->profit, 2, ',', '.') }}
                                         </td>

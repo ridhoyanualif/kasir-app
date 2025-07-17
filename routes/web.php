@@ -99,6 +99,9 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     Route::get('/admin/discounts', [DiscountController::class, 'index'])->name('discounts.index');
     // Route::resource('admin/discounts', DiscountController::class);
     Route::post('/admin/discounts', [DiscountController::class, 'store'])->name('admin.discounts.store');
+    Route::get('/admin/discounts/{id}/edit', [DiscountController::class, 'edit'])->name('discounts.edit');
+    Route::put('/admin/discounts/{id}', [DiscountController::class, 'update'])->name('discounts.update');
+    Route::delete('/admin/discounts/{id}', [DiscountController::class, 'destroy'])->name('discounts.destroy');
 
     Route::get('/members/{id}/edit', [MemberController::class, 'edit'])->name('members.edit');
     Route::put('/members/{id}', [MemberController::class, 'update'])->name('members.update');

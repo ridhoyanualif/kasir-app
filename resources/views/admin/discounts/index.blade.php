@@ -11,6 +11,55 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     {{ __('Discounts Table') }}
 
+                    @if ($errors->any())
+                        <div id="error-message"
+                            class="bg-red-500 text-white p-4 rounded mt-6 mb-4 transition-opacity duration-1000">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <div class="overflow-x-auto mt-4">
+                        <table class="min-w-full border border-gray-300 dark:border-gray-600">
+                            <thead class="bg-gray-200 dark:bg-gray-700">
+                                <tr>
+                                    <th class="border border-gray-300 px-4 py-2">ID</th>
+                                    <th class="border border-gray-300 px-4 py-2">Name</th>
+                                    <th class="border border-gray-300 px-4 py-2">Description</th>
+                                    <th class="border border-gray-300 px-4 py-2">Cut</th>
+                                    <th class="border border-gray-300 px-4 py-2">Start Date</th>
+                                    <th class="border border-gray-300 px-4 py-2">End Date</th>
+                                    <th class="border border-gray-300 px-4 py-2">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($discounts as $discount)
+                                    <tr class="bg-white dark:bg-gray-800">
+                                        <td class="border border-gray-300 px-4 py-2">{{ $discount->id }}</td>
+                                        <td class="border border-gray-300 px-4 py-2">{{ $discount->name }}</td>
+                                        <td class="border border-gray-300 px-4 py-2">{{ $discount->description }}</td>
+                                        <td class="border border-gray-300 px-4 py-2">{{ $discount->cut }}%</td>
+                                        <td class="border border-gray-300 px-4 py-2">{{ $discount->start_datetime }}
+                                        </td>
+                                        <td class="border border-gray-300 px-4 py-2">{{ $discount->end_datetime }}</td>
+                                        <td class="border border-gray-300 px-4 py-2">
+                                            <a href="{{ route('discounts.edit', $discount->id) }}"
+                                                class="bg-blue-500 text-white px-3 py-1 rounded">Edit</a>
+                                            <form action="{{ route('discounts.destroy', $discount->id) }}"
+                                                method="POST" class="inline-block ml-2">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
                     <div class="mb-6 mt-6">
                         <h3 class="text-lg font-semibold">Add Discount</h3>
                         <form action="{{ route('admin.discounts.store') }}" method="POST" class="mt-4">
@@ -69,16 +118,16 @@
 
                                 <input type="hidden" name="fid_product" :value="selected?.id">
                             </div>
-                             <div>
-                                    <label class="block text-sm font-medium">Start Date</label>
-                                    <input type="datetime-local" name="start_date"
-                                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white bg-gray-700">
-                                </div>
-                             <div>
-                                    <label class="block text-sm font-medium">End Date</label>
-                                    <input type="datetime-local" name="end_date"
-                                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white bg-gray-700">
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium">Start Date</label>
+                                <input type="datetime-local" name="start_date"
+                                    class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white bg-gray-700">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium">End Date</label>
+                                <input type="datetime-local" name="end_date"
+                                    class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white bg-gray-700">
+                            </div>
 
 
 
