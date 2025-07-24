@@ -26,33 +26,39 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 ml-6 mr-6">
         @foreach ($products as $product)
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition p-4">
-                <img src="{{ asset('storage/' . $product->photo) }}" alt="Product Photo"
-                    class="w-full h-40 object-cover rounded-md mb-4">
+            @if ($product->stock > 0)
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition p-4">
+                    <img src="{{ asset('storage/' . $product->photo) }}" alt="Product Photo"
+                        class="w-full h-40 object-cover rounded-md mb-4">
 
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $product->name }}</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $product->name }}</h3>
 
-                @if($product->selling_price_before !== null)
-                    <p class="text-orange-500 font-bold text-xs line-through">Rp. {{ number_format($product->selling_price_before, 2, ',', '.') }}</p>
-                @endif
+                    @if ($product->selling_price_before !== null)
+                        <p class="text-orange-500 font-bold text-xs line-through">Rp.
+                            {{ number_format($product->selling_price_before, 2, ',', '.') }}</p>
+                        <p class="text-yellow-500 font-bold text-sm">{{ $product->discount->cut }}%
+                            {{ $product->discount->name }}</p>
+                    @endif
 
-                <p class="text-green-500 font-bold">Rp. {{ number_format($product->selling_price, 2, ',', '.') }}</p>
+                    <p class="text-green-500 font-bold">Rp. {{ number_format($product->selling_price, 2, ',', '.') }}
+                    </p>
 
-                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                    Kategori: <span class="italic">{{ $product->category->name ?? 'Tidak ada' }}</span>
-                </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Kategori: <span class="italic">{{ $product->category->name ?? 'Tidak ada' }}</span>
+                    </p>
 
-                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Ketersediaan: {{ $product->stock }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Ketersediaan: {{ $product->stock }}</p>
 
-                <p class="text-sm text-gray-700 dark:text-gray-400 mt-2 overflow-hidden">
-                    {{ $product->description }}
-                </p>
+                    <p class="text-sm text-gray-700 dark:text-gray-400 mt-2 overflow-hidden">
+                        {{ $product->description }}
+                    </p>
 
-                <a href="{{ route('add.to.cart', $product->id_product) }}"
-                    class="block mt-4 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded">
-                    Add to cart
-                </a>
-            </div>
+                    <a href="{{ route('add.to.cart', $product->id_product) }}"
+                        class="block mt-4 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded">
+                        Add to cart
+                    </a>
+                </div>
+            @endif
         @endforeach
     </div>
 
@@ -133,13 +139,16 @@
                         <form action="{{ route('pos.from.cart') }}" method="POST">
                             @csrf
                             @foreach (session('cart') as $id => $details)
-                                <input type="hidden" name="products[{{ $id }}][id]" value="{{ $id }}">
-                                <input type="hidden" name="products[{{ $id }}][name]" value="{{ $details['name'] }}">
-                                <input type="hidden" name="products[{{ $id }}][price]" value="{{ $details['price'] }}">
-                                <input type="hidden" name="products[{{ $id }}][quantity]" value="{{ $details['quantity'] }}">
+                                <input type="hidden" name="products[{{ $id }}][id]"
+                                    value="{{ $id }}">
+                                <input type="hidden" name="products[{{ $id }}][name]"
+                                    value="{{ $details['name'] }}">
+                                <input type="hidden" name="products[{{ $id }}][price]"
+                                    value="{{ $details['price'] }}">
+                                <input type="hidden" name="products[{{ $id }}][quantity]"
+                                    value="{{ $details['quantity'] }}">
                             @endforeach
-                            <button
-                                type="submit"
+                            <button type="submit"
                                 class="block mt-2 w-full text-center bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
                                 Checkout
                             </button>
@@ -174,7 +183,7 @@
         });
 
         // Open cart if session('open_cart') is set
-        @if(session('open_cart'))
+        @if (session('open_cart'))
             dropdown.classList.remove('hidden');
         @endif
     </script>

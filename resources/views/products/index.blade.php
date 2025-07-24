@@ -62,12 +62,11 @@
                                         <td class="border border-gray-300 px-4 py-2 text-center align-middle">
                                             @if ($product->discount)
                                                 <span
-                                                    class="bg-green-600 text-gray-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                                    class="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
                                                     {{ $product->fid_discount }} - {{ $product->discount->name }}
                                                 </span>
                                             @else
-                                                <span
-                                                    class="text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                                <span class="text-white text-sm font-semibold px-3 py-1 rounded-full">
                                                     -
                                                 </span>
                                             @endif
