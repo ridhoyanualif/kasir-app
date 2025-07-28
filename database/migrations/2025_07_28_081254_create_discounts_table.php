@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('discounts', function (Blueprint $table) {
-            $table->bigInteger('id', false, true)->primary();
+            $table->id('id', false, true)->primary();
             $table->string('name', 255);
             $table->text('description')->nullable();
             $table->string('cut', 255);

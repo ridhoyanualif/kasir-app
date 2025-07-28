@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transaction_details', function (Blueprint $table) {
-            $table->bigInteger('id', false, true)->primary();
-            $table->bigInteger('transaction_id', false, true);
-            $table->bigInteger('product_id', false, true);
+            $table->id('id', false, true)->primary();
+            $table->unsignedBigInteger('transaction_id', false, true);
+            $table->unsignedBigInteger('product_id', false, true);
             $table->integer('quantity');
             $table->string('price', 255);
             $table->timestamps();

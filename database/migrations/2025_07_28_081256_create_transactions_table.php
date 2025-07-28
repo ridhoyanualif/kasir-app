@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->bigInteger('id', false, true)->primary();
+            $table->id('id', false, true)->primary();
             $table->string('invoice', 255)->nullable()->unique();
-            $table->bigInteger('user_id', false, true);
-            $table->integer('fid_member', false, true)->nullable();
+            $table->unsignedBigInteger('user_id', false, true);
+            $table->unsignedBigInteger('fid_member', false, true)->nullable();
             $table->integer('point')->default(0);
             $table->integer('point_after')->default(0);
             $table->string('cut', 255)->nullable();
