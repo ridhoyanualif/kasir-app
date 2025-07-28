@@ -34,15 +34,30 @@ class CartController extends Controller
      *
      * @return response()
      */
+
     public function addToCart($id)
     {
         $product = Product::findOrFail($id);
 
+        // Check if there is enough stock
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', 'Product out of stock!');
+        }
+
+        // Get the current cart from the session
         $cart = session()->get('cart', []);
 
+        // If the product is already in the cart
         if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
+            // Check if the added quantity exceeds the available stock
+            if ($cart[$id]['quantity'] < $product->stock) {
+                // Increment quantity only if stock is available
+                $cart[$id]['quantity']++;
+            } else {
+                return redirect()->back()->with('error', 'Not enough stock available!');
+            }
         } else {
+            // If the product is not in the cart, add it with quantity 1
             $cart[$id] = [
                 "name" => $product->name,
                 "quantity" => 1,
@@ -51,10 +66,14 @@ class CartController extends Controller
             ];
         }
 
+        // Save the cart back to the session
         session()->put('cart', $cart);
         session()->flash('open_cart', true);
+
+        // Success message
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
+
 
     /**
      * Write code on Method
