@@ -106,7 +106,7 @@
                                                     class="px-2 py-1 bg-blue-600 text-white rounded">Edit</a>
 
                                                 <form action="{{ route('products.destroy', $product->id_product) }}"
-                                                    method="POST" onsubmit="return confirm('Are you sure?');">
+                                                    method="POST" onsubmit="return confirm('Delete Product, Are You Sure?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
