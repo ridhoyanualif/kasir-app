@@ -1,9 +1,34 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Cashier Dashboard') }}
-        </h2>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <h2 class="font-semibold text-lg text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Cashier Dashboard') }}
+            </h2>
+
+            <form action="" class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
+                <input type="text" name="search" id="search" value="{{ request('search') }}"
+                    class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 px-2 sm:w-48"
+                    placeholder="Search" />
+
+                <select name="category" id="category" onchange="this.form.submit()"
+                    class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 px-2 sm:w-40">
+                    <option value="">All</option>
+                    @foreach ($dropdowns as $d)
+                        <option value="{{ $d->id_category }}"
+                            {{ request('category') == $d->id_category ? 'selected' : '' }}>
+                            {{ $d->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <button type="submit"
+                    class="h-10 px-3 rounded bg-indigo-600 dark:bg-indigo-500 text-white text-xs font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+                    Search
+                </button>
+            </form>
+        </div>
     </x-slot>
+
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -11,10 +36,10 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     {{ __("You're logged in!") }}
                 </div>
-
             </div>
         </div>
     </div>
+
 
     @if ($errors->any())
         <div id="error-message" class="bg-red-500 text-white p-4 rounded mt-6 mb-4 transition-opacity duration-1000">
@@ -27,37 +52,37 @@
     {{-- from cart controller --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 ml-6 mr-6">
         @foreach ($products as $product)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition p-4">
-                    <img src="{{ asset('storage/' . $product->photo) }}" alt="Product Photo"
-                        class="w-full h-40 object-cover rounded-md mb-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition p-4">
+                <img src="{{ asset('storage/' . $product->photo) }}" alt="Product Photo"
+                    class="w-full h-40 object-cover rounded-md mb-4">
 
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $product->name }}</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $product->name }}</h3>
 
-                    @if ($product->selling_price_before !== null)
-                        <p class="text-orange-500 font-bold text-xs line-through">Rp.
-                            {{ number_format($product->selling_price_before, 2, ',', '.') }}</p>
-                        <p class="text-yellow-500 font-bold text-sm">{{ $product->discount->cut }}%
-                            {{ $product->discount->name }}</p>
-                    @endif
+                @if ($product->selling_price_before !== null)
+                    <p class="text-orange-500 font-bold text-xs line-through">Rp.
+                        {{ number_format($product->selling_price_before, 2, ',', '.') }}</p>
+                    <p class="text-yellow-500 font-bold text-sm">{{ $product->discount->cut }}%
+                        {{ $product->discount->name }}</p>
+                @endif
 
-                    <p class="text-green-500 font-bold">Rp. {{ number_format($product->selling_price, 2, ',', '.') }}
-                    </p>
+                <p class="text-green-500 font-bold">Rp. {{ number_format($product->selling_price, 2, ',', '.') }}
+                </p>
 
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                        Kategori: <span class="italic">{{ $product->category->name ?? 'Tidak ada' }}</span>
-                    </p>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                    Kategori: <span class="italic">{{ $product->category->name ?? 'Tidak ada' }}</span>
+                </p>
 
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Ketersediaan: {{ $product->stock }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Ketersediaan: {{ $product->stock }}</p>
 
-                    <p class="text-sm text-gray-700 dark:text-gray-400 mt-2 overflow-hidden">
-                        {{ $product->description }}
-                    </p>
+                <p class="text-sm text-gray-700 dark:text-gray-400 mt-2 overflow-hidden">
+                    {{ $product->description }}
+                </p>
 
-                    <a href="{{ route('add.to.cart', $product->id_product) }}"
-                        class="block mt-4 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded">
-                        Add to cart
-                    </a>
-                </div>
+                <a href="{{ route('add.to.cart', $product->id_product) }}"
+                    class="block mt-4 text-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded">
+                    Add to cart
+                </a>
+            </div>
         @endforeach
     </div>
 
@@ -165,7 +190,6 @@
         </div>
     </div>
 
-    <!-- Toggle Dropdown Script -->
     <script>
         const toggleButton = document.getElementById('cart-toggle');
         const dropdown = document.getElementById('cart-dropdown');

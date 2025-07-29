@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Discount;
+use App\Models\Category;
 
 class CartController extends Controller
 {
@@ -15,8 +15,33 @@ class CartController extends Controller
      */
     public function index()
     {
-        $products = Product::where('stock', '>', 0)->where('expired_date', '>', now())->orWhereNull('expired_date')->get();
-        return view('dashboard', compact('products'));
+        $dropdowns = Category::whereIn('id_category', Product::pluck('fid_category'))
+            ->get(['id_category', 'name']);
+        $dropdowns->transform(function ($item) {
+            return $item;
+        });
+
+        $query = Product::query();
+
+        $query->where('stock', '>', 0)
+            ->where(function ($q) {
+                $q->where('expired_date', '>', now())
+                    ->orWhereNull('expired_date');
+            });
+
+        if (request()->filled('search')) {
+            $search = request('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if (request()->filled('category')) {
+            $category = request('category');
+            $query->where('fid_category', $category);
+        }
+
+        $products = $query->get();
+
+        return view('dashboard', compact('products', 'dropdowns'));
     }
 
     /**
