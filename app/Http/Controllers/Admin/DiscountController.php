@@ -33,8 +33,8 @@ class DiscountController extends Controller
             'name' => 'required|string|max:225',
             'description' => 'nullable|string|max:500',
             'cut' => 'required|numeric|min:0|max:100',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'required|date|after_or_equal:now',
+            'end_date' => 'required|date|after:start_date',
             'fid_product' => 'required|exists:products,id_product',
         ]);
 

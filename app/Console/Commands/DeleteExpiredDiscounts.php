@@ -33,17 +33,11 @@ class DeleteExpiredDiscounts extends Command
         $expiredDiscountIds = Discount::where('end_datetime', '<', Carbon::now())->pluck('id');
 
         if ($expiredDiscountIds->isNotEmpty()) {
-            // Update produk yang terkait
             Product::whereIn('fid_discount', $expiredDiscountIds)->update([
-                'selling_price' => DB::statement("
-    UPDATE products
-    SET selling_price = selling_price_before,
-        selling_price_before = NULL,
-        fid_discount = NULL
-    WHERE fid_discount IN (" . $expiredDiscountIds->implode(',') . ")
-"),
+                'selling_price' => Product::where('fid_discount', $expiredDiscountIds)->value('selling_price_before'),
                 'selling_price_before' => null,
                 'fid_discount' => null,
+                'profit' => (Product::where('fid_discount', $expiredDiscountIds)->value('selling_price_before') - Product::where('fid_discount', $expiredDiscountIds)->value('modal')),
             ]);
 
             // Hapus diskonnya
