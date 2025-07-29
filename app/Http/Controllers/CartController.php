@@ -15,7 +15,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::where('stock', '>', 0)->where('expired_date', '>', now())->orWhereNull('expired_date')->get();
         return view('dashboard', compact('products'));
     }
 

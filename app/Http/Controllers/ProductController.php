@@ -109,7 +109,7 @@ class ProductController extends Controller
 
 public function checkBarcode(Request $request)
 {
-    $exists = \App\Models\Product::where('barcode', $request->barcode)->exists();
+    $exists = Product::where('barcode', $request->barcode)->exists();
     return response()->json(['exists' => $exists]);
 }
 

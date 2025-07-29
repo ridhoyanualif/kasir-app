@@ -40,7 +40,7 @@
                                     <p>{{ $transaction->point_after == 0 ? '-' : $transaction->point_after }}</p>
                                 </div>
                                 <div>
-                                    <span class="font-semibold">Potongan Point (Cut):</span>
+                                    <span class="font-semibold">Potongan:</span>
                                     <p>Rp {{ number_format($transaction->cut, 0, ',', '.') }}</p>
                                 </div>
                                 <div>

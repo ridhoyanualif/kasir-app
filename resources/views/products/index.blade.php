@@ -48,7 +48,18 @@
 
                                         <td class="border border-gray-300 px-4 py-2">{{ $product->name }}</td>
                                         <td class="border border-gray-300 px-4 py-2 text-center align-middle">
-                                            {{ $product->expired_date ?? '-' }}</td>
+                                            @if ($product->expired_date)
+                                                @if (strtotime($product->expired_date)< time())
+                                                    <span class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full">
+                                                        {{ $product->expired_date }} - Expired
+                                                    </span>
+                                                @else
+                                                    {{ $product->expired_date }}
+                                                @endif
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                         <td class="border border-gray-300 px-4 py-2">{{ $product->stock }}</td>
                                         <td class="border border-gray-300 px-4 py-2">
                                             {{ 'Rp. ' . number_format($product->modal, 2, ',', '.') }}

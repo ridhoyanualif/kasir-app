@@ -24,9 +24,9 @@
         </div>
     @endif
 
+    {{-- from cart controller --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 ml-6 mr-6">
         @foreach ($products as $product)
-            @if ($product->stock > 0)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition p-4">
                     <img src="{{ asset('storage/' . $product->photo) }}" alt="Product Photo"
                         class="w-full h-40 object-cover rounded-md mb-4">
@@ -58,7 +58,6 @@
                         Add to cart
                     </a>
                 </div>
-            @endif
         @endforeach
     </div>
 

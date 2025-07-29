@@ -20,25 +20,25 @@ class UserController extends Controller
     }
 
     public function generatePdf(Request $request)
-{
-    $htmlContent = $request->input('html');
-    $transactionId = $request->input('transaction_id');
+    {
+        $htmlContent = $request->input('html');
+        $transactionId = $request->input('transaction_id');
 
-    $receiptFolder = storage_path("app/public/selling-report");
-    if (!file_exists($receiptFolder)) {
-        mkdir($receiptFolder, 0755, true);
+        $receiptFolder = storage_path("app/public/selling-report");
+        if (!file_exists($receiptFolder)) {
+            mkdir($receiptFolder, 0755, true);
+        }
+
+        $pdfPath = "{$receiptFolder}/{$transactionId}_Selling_Report.pdf";
+
+        Browsershot::html($htmlContent)
+            ->format('A4')
+            ->margins(10, 10, 10, 10)
+            ->waitUntilNetworkIdle()
+            ->savePdf($pdfPath);
+
+        return response()->file($pdfPath);
     }
-
-    $pdfPath = "{$receiptFolder}/{$transactionId}_Selling_Report.pdf";
-
-    Browsershot::html($htmlContent)
-        ->format('A4')
-        ->margins(10, 10, 10, 10)
-        ->waitUntilNetworkIdle()
-        ->savePdf($pdfPath);
-
-    return response()->file($pdfPath);
-}
 
     /**
      * Show the form for creating a new resource.
