@@ -12,6 +12,24 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h2 class="text-xl font-bold mb-4">Point of Sale</h2>
 
+                    @if (session('success'))
+                        <div class="bg-green-500 text-white p-3 mb-4 rounded" x-data="{ show: true }"
+                            x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 2000)"
+                            x-transition:leave="transition-opacity duration-700 ease-out"
+                            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div id="error-message"
+                            class="bg-red-500 text-white p-4 rounded mb-4 transition-opacity duration-1000">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-2 gap-6">
                         <!-- Scanner Webcam & Input Barcode -->
                         <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow">
@@ -105,6 +123,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
@@ -402,6 +421,11 @@
                 return 'Rp. ' + Number(number).toLocaleString('id-ID');
             }
 
+            const phone = transaction.member_phone;
+            // const routeTemplate = "/pos/send-message/:phone";
+            // const actionUrl = routeTemplate.replace(':phone', phone);
+            // const csrfToken = "{{ csrf_token() }}";
+
             let receiptContent = `
     <div class="bg-white p-4 rounded-lg shadow text-gray-900" id="receipt-content">
         <div class="mx-auto h-20 w-20 relative" id="logo-container">
@@ -417,12 +441,11 @@
     <p class="block text-sm font-medium"><strong>Date:</strong> ${transaction.transaction_date}</p>
 
     ${transaction.member_id ? `
-                            <hr class="my-2 border-gray-900">
-                            <p class="block text-sm font-medium"><strong>Member ID:</strong> ${transaction.member_id}</p>
-                            <p class="block text-sm font-medium"><strong>Member Name:</strong> ${transaction.member_name}</p>
-                            <p class="block text-sm font-medium"><strong>Point Before:</strong> ${transaction.point}</p>
-                            <p class="block text-sm font-medium"><strong>Point After:</strong> ${transaction.point_after}</p>
-                        ` : ''}
+                                        <hr class="my-2 border-gray-900">
+                                        <p class="block text-sm font-medium"><strong>Member ID:</strong> ${transaction.member_id} - ${transaction.member_name}</p>
+                                        <p class="block text-sm font-medium"><strong>Point Before:</strong> ${transaction.point} Pts.</p>
+                                        <p class="block text-sm font-medium"><strong>Point After:</strong> ${transaction.point_after} Pts.</p>
+                                    ` : ''}
 
     <hr class="my-2 border-gray-900">
     <h3 class="text-lg font-semibold">Items:</h3>
@@ -436,12 +459,12 @@
         </thead>
         <tbody>
             ${transaction.items.map(item => `
-                                    <tr>
-                                        <td class="border border-gray-900 px-2 py-1">${item.name}</td>
-                                        <td class="border border-gray-900 px-2 py-1 text-center">${item.quantity}</td>
-                                        <td class="border border-gray-900 px-2 py-1 text-right">${formatRupiah(item.price)}</td>
-                                    </tr>
-                                `).join('')}
+                                                <tr>
+                                                    <td class="border border-gray-900 px-2 py-1">${item.name}</td>
+                                                    <td class="border border-gray-900 px-2 py-1 text-center">${item.quantity}</td>
+                                                    <td class="border border-gray-900 px-2 py-1 text-right">${formatRupiah(item.price)}</td>
+                                                </tr>
+                                            `).join('')}
         </tbody>
     </table>
 
@@ -458,6 +481,25 @@
     <button id="exclude-pdf-button" onclick="downloadReceiptPDF('${transaction.invoice}')" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded w-full">
     PDF Receipt
 </button>
+${transaction.member_id ? `<form method="POST" action="{{ route('pos.send.message') }}">
+        @csrf
+        <input type="hidden" name="phone" value="${transaction.member_phone}">
+        <input type="hidden" name="invoice" value="${transaction.invoice}">
+        <input type="hidden" name="cashier_id" value="${transaction.cashier_id}">
+        <input type="hidden" name="cashier_name" value="${transaction.cashier_name}">
+        <input type="hidden" name="transaction_date" value="${transaction.transaction_date}">
+        <input type="hidden" name="items" value='${JSON.stringify(transaction.items)}'>
+        <input type="hidden" name="total_price" value="${transaction.total_price}">
+        <input type="hidden" name="cut" value="${transaction.cut}">
+        <input type="hidden" name="total_price_after" value="${transaction.total_price_after}">
+        <input type="hidden" name="cash" value="${transaction.cash}">
+        <input type="hidden" name="change" value="${transaction.change}">
+        <input type="hidden" name="point" value="${transaction.point}">
+        <input type="hidden" name="point_after" value="${transaction.point_after}">
+        <input type="hidden" name="member_id" value="${transaction.member_id}">
+        <input type="hidden" name="member_name" value="${transaction.member_name}">
+        <button id="" type="submit" class="mt-4 px-4 py-2 bg-green-600 text-white rounded w-full">Send To Whatsapp</button>
+        </form>` : ''}
 `;
 
 

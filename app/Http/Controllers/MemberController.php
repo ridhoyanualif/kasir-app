@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Member;
+use Illuminate\Support\Facades\Storage;
 
 class MemberController extends Controller
 {
@@ -83,8 +84,11 @@ class MemberController extends Controller
     public function destroy($id)
     {
         $member = Member::findOrFail($id);
-        $member->delete();
-
-        return redirect()->route('members.index')->with('success', 'Member deleted successfully!');
+        if($member->status == 'non-active'){
+            $member->delete();
+            return redirect()->route('members.index')->with('success', 'Member deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Cannot delete member with status is active.');
+        }
     }
 }

@@ -46,10 +46,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/members/search', [MemberController::class, 'search']);
 });
 
-
-
-
-
 require __DIR__ . '/auth.php';
 
 
@@ -64,7 +60,8 @@ Route::middleware(['auth', 'cashierMiddleware'])->group(function () {
         session()->forget('pos_cart');
         return response()->noContent();
     })->name('pos.clear.session');
-    Route::post('/pos/from-cart', [\App\Http\Controllers\POSController::class, 'fromCart'])->name('pos.from.cart');
+    Route::post('/pos/from-cart', [POSController::class, 'fromCart'])->name('pos.from.cart');
+    Route::post('/pos/send-message', [POSController::class, 'sendMessage'])->name('pos.send.message');
 
     Route::post('/generate-pdf', [ReceiptController::class, 'generatePdf'])->name('generate.pdf');
 
@@ -95,6 +92,7 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     Route::get('/admin/history', [HistoryController::class, 'index'])->name('history.index');
     Route::get('/admin/history/{id}/show', [HistoryController::class, 'show'])->name('history.show');
     Route::post('/generate-pdf', [HistoryController::class, 'generatePdf'])->name('history.generate-pdf');
+    Route::delete('/admin/history/{id}', [HistoryController::class, 'destroy'])->name('history.destroy');
 
     Route::get('/admin/discounts', [DiscountController::class, 'index'])->name('discounts.index');
     // Route::resource('admin/discounts', DiscountController::class);

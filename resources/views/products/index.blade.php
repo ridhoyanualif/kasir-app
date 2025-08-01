@@ -130,6 +130,13 @@
                         </div>
                     @endif
 
+                    @if (session('error'))
+                        <div id="error-message"
+                            class="bg-red-500 text-white p-4 rounded mt-6 mb-4 transition-opacity duration-1000">
+                            <p>{{ session('error') }}</p>
+                        </div>
+                    @endif
+
                     @if (session('success'))
                         <div id="success-message"
                             class="bg-green-500 text-white p-4 rounded mt-6 mb-4 transition-opacity duration-1000">

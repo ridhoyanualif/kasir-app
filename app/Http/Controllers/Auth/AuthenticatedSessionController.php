@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,14 +29,19 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (Auth::user()->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    } elseif (Auth::user()->role === 'cashier') {
-        return redirect()->route('dashboard');
-    }
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $user->update(['is_logged_in' => true]);
 
-    // Default fallback
-    return redirect('/');
+
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif (Auth::user()->role === 'cashier') {
+            return redirect()->route('dashboard');
+        }
+
+        // Default fallback
+        return redirect('/');
     }
 
     /**
@@ -43,6 +49,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($user) {
+            $user->update(['is_logged_in' => false]);
+        }
+
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

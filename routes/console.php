@@ -10,4 +10,5 @@ Artisan::command('inspire', function () {
 
 return function (Schedule $schedule) {
     $schedule->command('discounts:cleanup')->hourly();
+    $schedule->command('member:update-status')->everyMinute();
 };

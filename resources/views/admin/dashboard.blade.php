@@ -77,12 +77,9 @@
                             onchange="this.form.submit()"
                             class="mt-1 w-48 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
-
-
                 </form>
 
 
-                <!-- Tanggal Range -->
                 @if (isset($startDate) && isset($endDate))
                     <p class="w-full mt-3 md:mt-0 text-sm text-gray-600 dark:text-gray-400 font-medium md:self-center">
                         {{ $startDate->format('d M Y') }} - {{ $endDate->format('d M Y') }}
@@ -93,7 +90,7 @@
                 <!-- Chart Canvas -->
                 <canvas id="salesChart" height="100"></canvas>
 
-                <!-- Profit Summary Grid -->
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-gray-800 rounded-b-lg shadow p-6">
 
                     <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-5">
@@ -134,13 +131,9 @@
                             {{ number_format($profitLevel, 2) }}% {{ $profitLabel }}
                         </p>
                     </div>
-
                 </div>
             </div>
-
         </div>
-
-
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -214,7 +207,7 @@
                 chartCanvas.parentNode.replaceChild(chartImg, chartCanvas); // Ganti canvas dengan img
 
                 const htmlContent = reportElement.outerHTML;
-                const transactionId = "{{ isset($startDate) && isset($endDate) ? $startDate->format('d-M-Y') . '-' . $endDate->format('d-M-Y') : 'report' }}";
+                const datePeriod = "{{ isset($startDate) && isset($endDate) ? $startDate->format('d-M-Y') . '-' . $endDate->format('d-M-Y') : 'report' }}";
 
                 fetch("{{ route('admin.generate-pdf') }}", {
                         method: "POST",
@@ -224,7 +217,7 @@
                         },
                         body: JSON.stringify({
                             html: htmlContent,
-                            transaction_id: transactionId
+                            datePeriod: datePeriod
                         })
                     })
                     .then(response => response.blob())
@@ -232,7 +225,7 @@
                         const blobUrl = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = blobUrl;
-                        a.download = `Selling-Report-${transactionId}.pdf`;
+                        a.download = `Selling-Report-${datePeriod}.pdf`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();

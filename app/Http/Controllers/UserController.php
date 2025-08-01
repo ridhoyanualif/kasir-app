@@ -15,21 +15,21 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::latest('id')->get(); // Fetch all users
-        return view('admin.users.index', compact('users')); // Pass $users to the view
+        $users = User::latest('id')->get();
+        return view('admin.users.index', compact('users'));
     }
 
     public function generatePdf(Request $request)
     {
         $htmlContent = $request->input('html');
-        $transactionId = $request->input('transaction_id');
+        $datePeriod = $request->input('datePeriod');
 
         $receiptFolder = storage_path("app/public/selling-report");
         if (!file_exists($receiptFolder)) {
             mkdir($receiptFolder, 0755, true);
         }
 
-        $pdfPath = "{$receiptFolder}/{$transactionId}_Selling_Report.pdf";
+        $pdfPath = "{$receiptFolder}/{$datePeriod}_Selling_Report.pdf";
 
         Browsershot::html($htmlContent)
             ->format('A4')

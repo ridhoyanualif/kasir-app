@@ -16,6 +16,7 @@ class DiscountController extends Controller
         $discounts = Discount::select(['id', 'name', 'description', 'cut', 'start_datetime', 'end_datetime'])->get();
 
         $dropdowns = Product::whereNull('fid_discount')
+            ->where('stock', '>', 0)
             ->get(['id_product', 'name', 'selling_price', 'photo']);
         $dropdowns->transform(function ($item) {
             $item->photo = $item->photo ? asset('storage/' . $item->photo) : '-';

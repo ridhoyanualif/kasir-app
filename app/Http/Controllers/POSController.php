@@ -37,6 +37,76 @@ class POSController extends Controller
         ]);
     }
 
+    public function sendMessage(Request $request)
+    {
+        $phone = $request->phone;
+
+        function formatRupiah($number)
+        {
+            return 'Rp' . number_format($number, 0, ',', '.');
+        }
+
+        $items = json_decode($request->input('items'), true);
+
+        // Mulai susun pesan
+        $message = "*Transaction Receipt*\n";
+        $message .= "\nCashier: {$request->input('cashier_id')} - {$request->input('cashier_name')}\n";
+        $message .= "Invoice: {$request->input('invoice')}\n";
+        $message .= "Date: {$request->input('transaction_date')}\n";
+
+        if ($request->filled('member_id')) {
+            $message .= "Member: {$request->input('member_id')} - {$request->input('member_name')}\n";
+            $message .= "Point Before: {$request->input('point')} pts\n";
+            $message .= "Point After: {$request->input('point_after')} pts\n";
+        }
+
+        $message .= "\n*Items:*\n";
+        foreach ($items as $item) {
+            $message .= "• {$item['name']} x{$item['quantity']} - " . formatRupiah($item['price']) . "\n";
+        }
+
+        $message .= "\nTotal Price: " . formatRupiah($request->input('total_price')) . "\n";
+
+        if ($request->input('cut') >= 0) {
+            $message .= "Cut (Point): - " . formatRupiah($request->input('cut')) . "\n";
+        }
+
+        if ($request->input('total_price_after') > 0) {
+            $message .= "Total After Cut: " . formatRupiah($request->input('total_price_after')) . "\n";
+        }
+
+        $message .= "Cash: " . formatRupiah($request->input('cash')) . "\n";
+        $message .= "Change: " . formatRupiah($request->input('change')) . "\n";
+
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.fonnte.com/send',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array(
+                'target' => $phone,
+                'message' => $message,
+                'countryCode' => '62',
+            ),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: WusrmY6nbQwASMnfqwRj' // Replace with your real token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        // return response()->json(json_decode($response, true));
+        return redirect()->back()->with($response ? 'success' : 'error', $response ? 'Message sent successfully!' : 'Failed to send message.');
+    }
+
 
     public function fromCart(Request $request)
     {
@@ -94,6 +164,7 @@ class POSController extends Controller
             if ($request->member_id) {
                 Member::where('id_member', $request->member_id)->update([
                     'point' => $request->point_after ?? 0,
+                    'status' => 'active',
                 ]);
             }
 
@@ -139,6 +210,7 @@ class POSController extends Controller
                     'change' => $transaction->change,
                     'items' => $items,
                     'member_id' => $transaction->fid_member,
+                    'member_phone' => $transaction->member ? $transaction->member->telephone : null,
                     'point' => $transaction->point,
                     'point_after' => $transaction->point_after,
                     'cut' => $transaction->cut,

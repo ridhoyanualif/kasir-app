@@ -11,6 +11,15 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-semibold mb-4">Edit Product</h3>
 
+                    @if ($errors->any())
+                        <div id="error-message"
+                            class="bg-red-500 text-white p-4 rounded mt-6 mb-4 transition-opacity duration-1000">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <form action="{{ route('products.update', $product->id_product) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')

@@ -12,6 +12,14 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-semibold">Users Table</h3>
 
+                    @if (session('alert'))
+                        <div class="bg-gray-600 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4"
+                            role="alert">
+                            <strong class="font-bold">Alert: </strong>
+                            <span class="block sm:inline">{{ session('alert') }}</span>
+                        </div>
+                    @endif
+
 
                     <div class="overflow-x-auto mt-4">
                         <table class="min-w-full border border-gray-300 dark:border-gray-600">

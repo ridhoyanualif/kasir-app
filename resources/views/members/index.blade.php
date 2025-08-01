@@ -11,7 +11,20 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-semibold mb-4">Members Table</h3>
 
-                    <!-- Tabel Members -->
+                    @if (session('error'))
+                        <div id="error-message"
+                            class="bg-red-500 text-white p-4 rounded mt-6 mb-4 transition-opacity duration-1000">
+                            <p>{{ session('error') }}</p>
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div id="success-message"
+                            class="bg-green-500 text-white p-4 rounded mt-6 mb-4 transition-opacity duration-1000">
+                            <p>{{ session('success') }}</p>
+                        </div>
+                    @endif
+                    
                     <div class="overflow-x-auto">
                         <table class="min-w-full border border-gray-300 dark:border-gray-600">
                             <thead class="bg-gray-200 dark:bg-gray-700">

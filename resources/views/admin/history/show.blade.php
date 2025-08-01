@@ -27,28 +27,32 @@
                                         {{ $transaction->user_id }} - {{ $transaction->user->name }}
                                     </div>
                                 </div>
+                                @if(isset($transaction->fid_member))
                                 <div>
-                                    <span class="font-semibold">Member ID:</span>
-                                    <p>{{ $transaction->fid_member ?? '-' }}</p>
+                                    <p class="font-semibold">Member ID:</p>
+                                    <div class="inline-block bg-blue-100 text-blue-800 dark:bg-blue-100 dark:text-blue-800 px-3 rounded-full font-semibold shadow">
+                                        {{ $transaction->fid_member ?? '' }} - {{  $transaction->member->name ?? '' }}
+                                    </div>
                                 </div>
                                 <div>
                                     <span class="font-semibold">Point:</span>
-                                    <p>{{ $transaction->point == 0 ? '-' : $transaction->point }}</p>
+                                    <p>{{ $transaction->point == 0 ? '-' : $transaction->point }} Pts.</p>
                                 </div>
                                 <div>
                                     <span class="font-semibold">Point After:</span>
-                                    <p>{{ $transaction->point_after == 0 ? '-' : $transaction->point_after }}</p>
+                                    <p>{{ $transaction->point_after == 0 ? '0' : $transaction->point_after }} Pts.</p>
                                 </div>
                                 <div>
                                     <span class="font-semibold">Potongan:</span>
                                     <p>Rp {{ number_format($transaction->cut, 0, ',', '.') }}</p>
                                 </div>
                                 <div>
-                                    <span class="font-semibold">Total Sebelum Diskon:</span>
+                                    <span class="font-semibold">Total Sebelum Potongan:</span>
                                     <p>Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</p>
                                 </div>
+                                @endif
                                 <div>
-                                    <span class="font-semibold">Total Setelah Diskon:</span>
+                                    <span class="font-semibold">Total:</span>
                                     <p>Rp {{ number_format($transaction->total_price_after, 0, ',', '.') }}</p>
                                 </div>
                                 <div>
@@ -69,7 +73,6 @@
                     </div>
                 </div>
 
-                <!-- RIGHT: Receipt -->
                 <div class="lg:w-1/2 w-full" id="receipt-container">
                     <div class="bg-gray-100 dark:bg-white p-4 rounded-lg shadow text-gray-900 dark:text-gray-700">
                         <div class="mx-auto h-20 w-20 relative" id="logo-container">
@@ -89,11 +92,11 @@
                         @if ($transaction->fid_member)
                             <hr class="my-2 border-gray-800">
                             <p class="block text-sm font-medium"><strong>Member ID:</strong>
-                                {{ $transaction->fid_member }}</p>
+                                {{ $transaction->fid_member }} - {{ $transaction->member->name }}</p>
                             <p class="block text-sm font-medium"><strong>Point Before:</strong>
-                                {{ $transaction->point }}</p>
+                                {{ $transaction->point }} Pts.</p>
                             <p class="block text-sm font-medium"><strong>Point After:</strong>
-                                {{ $transaction->point_after }}</p>
+                                {{ $transaction->point_after }} Pts.</p>
                         @endif
 
                         <hr class="my-2 border-gray-800">
@@ -123,14 +126,14 @@
                         </table>
 
                         <hr class="my-2">
-                        <p><strong>Total Price:</strong> <span class="text-blue-800">Rp
-                                {{ number_format($transaction->total_price, 0, ',', '.') }}</span></p>
                         @if ($transaction->cut > 0)
+                        <p><strong>Total Price Before Cut:</strong> <span class="text-blue-800">Rp
+                                {{ number_format($transaction->total_price, 0, ',', '.') }}</span></p>
                             <p><strong>Cut (Point):</strong> <span class="text-red-900">-Rp
                                     {{ number_format($transaction->cut, 0, ',', '.') }}</span></p>
                         @endif
                         @if ($transaction->total_price_after > 0)
-                            <p><strong>Total After Cut:</strong> <span class="text-blue-900">Rp
+                            <p><strong>Total Price:</strong> <span class="text-blue-900">Rp
                                     {{ number_format($transaction->total_price_after, 0, ',', '.') }}</span></p>
                         @endif
                         <p><strong>Cash:</strong> <span class="text-green-700">Rp
@@ -149,7 +152,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 
     <script>
         function downloadPDF() {

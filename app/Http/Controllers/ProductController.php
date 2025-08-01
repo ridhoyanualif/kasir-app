@@ -20,7 +20,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'barcode' => 'required|string|max:255|unique:products,barcode',
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:products,name',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'expired_date' => 'nullable|date|after:now',
             'stock' => 'required|integer',
@@ -59,9 +59,9 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:products,name',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'expired_date' => 'nullable|date',
+            'expired_date' => 'nullable|date|after:now',
             'stock' => 'required|integer',
             'modal' => 'required|numeric',
             'selling_price' => 'required|numeric',
@@ -117,8 +117,16 @@ public function checkBarcode(Request $request)
 
     public function destroy($id)
     {
-        Product::findOrFail($id)->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
+        $product = Product::findOrFail($id);
+        if($product->stock == 0){
+            if ($product->photo) {
+                Storage::disk('public')->delete($product->photo);
+            }
+            $product->delete();
+            return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Cannot delete product with stock greater than zero.');
+        }
     }
 
 }
